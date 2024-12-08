@@ -56,6 +56,8 @@ python utils/create_independent_uniform_pseudo_data.py \
 
 ### Run Training and Sampling
 Edit the necessary configuration in the scripts, then execute:
+
+For example, to run the *out-distribution* pseudo data experiment for adult dataset, modify the configuration scripts linked in `scripts/run/adult/ood.sh`, then execute:
 ```bash
 bash scripts/run/adult/ood.sh
 ```
@@ -64,7 +66,7 @@ bash scripts/run/adult/ood.sh
 
 ## **Evaluate Synthetic Data**
 
-To evaluate the synthetic data, modify the evaluation scripts as needed, and then run:
+To evaluate the synthetic data, modify the path to the generated data in `scripts/tabular_metrics.py`, and then run:
 ```bash
 bash scripts/tabular_metrics.sh
 ```
@@ -88,7 +90,7 @@ To run the **SmartChoice** baseline models:
 
 Alternatively, you can revert the `opacus` version to match this project's requirements by reinstalling dependencies from `requirements.txt`.
 
-Modify the `scripts/baseline.sh` as needed, and the run:
+To run the baselines, modify the `scripts/baseline.sh` as needed, and the run:
 ```bash
 bash scripts/baselines.sh
 ```
