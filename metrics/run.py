@@ -6,6 +6,7 @@ from functools import partial
 from marginal import histogram_intersection, column_metric_wrapper
 from utility import efficacy_test
 from exact_duplicates import get_exact_duplicates
+from column_pair import pairwise_similarity, correlation_accuracy
 
 
 def get_parser():
@@ -74,6 +75,8 @@ def get_parser():
             "histogram_intersection",
             "efficacy_test",
             "exact_duplicates",
+            "pairwise_similarity",
+            "correlation_accuracy",
         ],
         default="efficacy_test",
         help="Metric name for evaluation",
@@ -400,6 +403,88 @@ def main():
                 "score": fake_test_dupl,
                 "metric": metric_name,
                 "scorer": "sum",
+                "tag": tag,
+            }
+        )
+
+    # Correlation Accuracy Metric
+    if metric_name == "correlation_accuracy":
+        realdata = test_data
+        fakedata = train_data
+        tag = "real"
+
+        real_score = correlation_accuracy(realdata=realdata, fakedata=fakedata)
+
+        out_dicts.append(
+            {
+                "real_path": test_path,
+                "fake_path": train_path,
+                "real_size": len(realdata),
+                "fake_size": len(fakedata),
+                "score": real_score,
+                "metric": metric_name,
+                "scorer": "accuracy",
+                "tag": tag,
+            }
+        )
+
+        realdata = test_data
+        fakedata = fake_data
+        tag = "fake"
+        fake_score = correlation_accuracy(realdata=realdata, fakedata=fakedata)
+        out_dicts.append(
+            {
+                "real_path": test_path,
+                "fake_path": fake_path,
+                "real_size": len(realdata),
+                "fake_size": len(fakedata),
+                "score": fake_score,
+                "metric": metric_name,
+                "scorer": "accuracy",
+                "tag": tag,
+            }
+        )
+
+    # Pairwise Similarity Metric
+    if metric_name == "pairwise_similarity":
+        realdata = test_data
+        fakedata = train_data
+        tag = "real"
+
+        real_score = pairwise_similarity(
+            realdata=realdata, fakedata=fakedata, bins=bins
+        )
+
+        out_dicts.append(
+            {
+                "real_path": test_path,
+                "fake_path": train_path,
+                "real_size": len(realdata),
+                "fake_size": len(fakedata),
+                "score": real_score,
+                "metric": metric_name,
+                "scorer": "mean",
+                "bins": bins,
+                "tag": tag,
+            }
+        )
+
+        realdata = test_data
+        fakedata = fake_data
+        tag = "fake"
+        fake_score = pairwise_similarity(
+            realdata=realdata, fakedata=fakedata, bins=bins
+        )
+        out_dicts.append(
+            {
+                "real_path": test_path,
+                "fake_path": fake_path,
+                "real_size": len(realdata),
+                "fake_size": len(fakedata),
+                "score": fake_score,
+                "metric": metric_name,
+                "scorer": "mean",
+                "bins": bins,
                 "tag": tag,
             }
         )
