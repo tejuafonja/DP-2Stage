@@ -4,6 +4,9 @@ import os
 import pandas as pd
 from snsynth.pytorch.nn import DPCTGAN, DPGAN
 from snsynth.pytorch import PytorchDPSynthesizer
+from snsynth.aim import AIMSynthesizer
+from snsynth.mst import MSTSynthesizer
+from snsynth.mwem import MWEMSynthesizer
 import torch
 import random
 import numpy as np
@@ -171,13 +174,50 @@ def main():
                 preprocessor_eps=0.1,
                 nullable=True,
             )
+        elif args.synthesizer == "aim":
+            model = AIMSynthesizer(
+                epsilon=args.target_epsilon, delta=args.target_delta, verbose=True
+            )
+            model.fit(
+                train_data,
+                categorical_columns=discrete_columns,
+                continuous_columns=list(set(columns) - set(discrete_columns)),
+                preprocessor_eps=args.preprocessor_eps,
+                nullable=True,
+            )
+        elif args.synthesizer == "mst":
+            model = MSTSynthesizer(
+                epsilon=args.target_epsilon, delta=args.target_delta, verbose=True
+            )
+            model.fit(
+                train_data,
+                categorical_columns=discrete_columns,
+                continuous_columns=list(set(columns) - set(discrete_columns)),
+                preprocessor_eps=args.preprocessor_eps,
+                nullable=True,
+            )
+        elif args.synthesizer == "mwem":
+            # doesn't work for adult dataset at the momement. I get a ValueError
+            # ValueError: array is too big; `arr.size * arr.dtype.itemsize` is larger than the maximum possible size.
+            model = MWEMSynthesizer(epsilon=args.target_epsilon, verbose=True)
+            model.fit(
+                train_data,
+                categorical_columns=discrete_columns,
+                continuous_columns=list(set(columns) - set(discrete_columns)),
+                preprocessor_eps=args.preprocessor_eps,
+                nullable=True,
+            )
         else:
             raise NotImplementedError("sorry!")
 
-        torch.save(
-            model,
-            os.path.join(save_path, "model.pkl"),
-        )
+        if args.synthesizer != "mst":
+            # Lazy fix: Ran into AttributeError when I try to save MST.
+            # AttributeError: Can't pickle local object 'MSTSynthesizer.compress_domain.<locals>.<lambda>'
+            torch.save(
+                model,
+                os.path.join(save_path, "model.pkl"),
+            )
+
     else:
         model = torch.load(os.path.join(save_path, "model.pkl"))
 
