@@ -640,8 +640,15 @@ class GenerateStartTokens:
     def categorical_start(self, start_col):
         n_samples = self.n_samples
 
-        metadata = get_metadata(self.dataset.to_pandas())
-        assert metadata[start_col]["dtype"] == "object"
+        ds = self.dataset.to_pandas()
+        
+        # cast col as object in case it's not
+        ds[start_col] = ds[start_col].astype("object")
+        
+        metadata = get_metadata(ds)
+        
+        assert metadata[start_col]["dtype"] == "object", print(f"Start Col: {start_col} should be an object.")
+        
         population = metadata[start_col]["categories"]["unique"]
         weights = metadata[start_col]["categories"]["weights"]
         start_words = random.choices(population, weights, k=n_samples)
@@ -890,7 +897,7 @@ def get_metadata(data):
             metadata[col]["categories"] = {
                 "unique": unique_categories,
                 "weights": weights,
-                "case": {cat.lower(): get_word_case(cat) for cat in unique_categories},
+                "case": {str(cat).lower(): get_word_case(cat) for cat in unique_categories},
             }
         else:
             metadata[col]["stats"] = {
