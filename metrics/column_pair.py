@@ -169,6 +169,8 @@ def pairwise_similarity(realdata, fakedata, bins=50, return_dataframe=False):
         joint_real["prob"] = joint_real["count"] / joint_real["count"].sum()
         joint_fake["prob"] = joint_fake["count"] / joint_fake["count"].sum()
 
+        joint_fake = joint_fake.astype(joint_real.dtypes)
+        
         # Align the two distributions
         merged = pd.merge(
             joint_real[[attr1, attr2, "prob"]],
