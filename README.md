@@ -75,11 +75,11 @@ bash scripts/tabular_metrics.sh
 
 ## **Baselines**
 
-To run the **SmartChoice** baseline models:
+To run the **SmartNoise** baseline models:
 1. It is recommended to create a separate environment due to dependency conflicts:
    ```bash
-   conda create -n smartchoice python=3.9
-   conda activate smartchoice
+   conda create -n smartnoise python=3.9
+   conda activate smartnoise
    ```
 
 2. Install the baseline dependencies:
