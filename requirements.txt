@@ -1,12 +1,11 @@
-smartnoise-synth
 anyio
 sdgym
 kaggle
 wget
 xgboost
 dython
-scikit-learn
 matplotlib
+scikit-learn==1.5.2
 wget==3.2
 black==23.3.0
 datasets==2.13.2
