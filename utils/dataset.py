@@ -819,6 +819,7 @@ def postprocess_data(table, metadata=None, dropna=False):
             if col_metadata["dtype"] == "object":
                 categories = col_metadata["categories"]["unique"]
                 case_function = col_metadata["categories"]["case"]
+                df[col] = df[col].fillna("None")
                 df[col] = df[col].apply(
                     lambda x: case_function.get(str(x).lower(), str.lower)(x)
                 )
