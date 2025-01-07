@@ -275,6 +275,9 @@ def correlation_accuracy(
         compute_only=True,
     )["corr"]
 
+    fake_corr = abs(fake_corr)
+    real_corr = abs(real_corr)
+
     real_corr_assigned = real_corr.copy()
     for col in real_corr.columns:
         real_corr_assigned[col] = real_corr[col].apply(lambda x: assign_levels(x))
