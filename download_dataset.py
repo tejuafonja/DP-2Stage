@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 import pandas as pd
 import wget
 import argparse
+from sklearn.model_selection import train_test_split
 
 
 def parse_args():
@@ -15,7 +16,7 @@ def parse_args():
         "-name",
         "--dataset-name",
         default="adult",
-        choices=["adult", "airline", "heart", "diabetes", "travel"],
+        choices=["adult", "airline", "texas"],
         type=str,
     )
     parser.add_argument("-save", "--save-path", default="./data", type=str)
@@ -235,12 +236,75 @@ def download_airline(args):
         split_by_seed(args)
 
 
-def download_travel(args):
+def download_texas(args):
     if not args.data_dir.exists():
-        raise FileExistsError(f"{args.dataset_name} folder does not exist!")
+        os.makedirs(args.data_dir)
 
-    if args.split_by_seed:
-        split_by_seed(args)
+    baseurl = "https://raw.githubusercontent.com/spring-epfl/synthetic_data_release/master/data/texas.csv"
+    filenames = ["adult.data", "adult.test", "adult.names"]
+    filedir = args.data_dir
+
+    status = get_download_status(args.dataset_name, filedir)
+
+    if all(status) and not args.force:
+        train = pd.read_csv(args.data_dir / "train.csv")
+        test = pd.read_csv(args.data_dir / "test.csv")
+
+        print("Dataset exists. Turn on `--force` to download it again.")
+    else:
+        # download data
+        df = pd.read_csv(baseurl)
+
+        # Only Choose Major or Minor RISK MORTALITY
+        # MINOR (1) OR MAJOR (3)
+        df = df[(df["RISK_MORTALITY"] == 1) | (df["RISK_MORTALITY"] == 3)]
+
+        cat_cols = [
+            "DISCHARGE",
+            "TYPE_OF_ADMISSION",
+            "PAT_STATE",
+            "PAT_STATUS",
+            "SEX_CODE",
+            "RACE",
+            "ADMIT_WEEKDAY",
+            "ETHNICITY",
+            "PAT_AGE",
+            "ILLNESS_SEVERITY",
+            "RISK_MORTALITY",
+        ]
+
+        num_cols = [
+            "LENGTH_OF_STAY",
+            "TOTAL_CHARGES",
+            "TOTAL_NON_COV_CHARGES",
+            "TOTAL_CHARGES_ACCOMM",
+            "TOTAL_NON_COV_CHARGES_ACCOMM",
+            "TOTAL_CHARGES_ANCIL",
+            "TOTAL_NON_COV_CHARGES_ANCIL",
+        ]
+
+        df[cat_cols] = df[cat_cols].astype("object")
+        df[num_cols] = df[num_cols].astype("float")
+
+        for col in cat_cols:
+            df[col] = df[col].apply(lambda x: str(x))
+
+        # preprocess data.
+        for col in df.columns:
+            if col in cat_cols:
+                df[col] = df[col].apply(lambda x: str(x).strip().capitalize())
+
+        df.columns = [i.lower() for i in df.columns]
+        label = "RISK_MORTALITY".lower()
+        train, test = train_test_split(
+            df, random_state=1000, test_size=0.2, stratify=df[label]
+        )
+
+        # save data as CSV files.
+        save_files(args, filedir, train, test)
+
+        if args.split_by_seed:
+            split_by_seed(args)
 
 
 if __name__ == "__main__":
@@ -252,5 +316,5 @@ if __name__ == "__main__":
     if args.dataset_name == "airline":
         download_airline(args=args)
 
-    if args.dataset_name == "travel":
-        download_travel(args=args)
+    if args.dataset_name == "texas":
+        download_texas(args=args)
