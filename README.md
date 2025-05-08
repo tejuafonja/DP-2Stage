@@ -1,8 +1,23 @@
 # **DP-2Stage: Adapting Language Models as Differentially Private Tabular Data Generators**
 
-This repository provides tools and scripts DP-2Stage, a two-stage fine-tuning framework for differentially private tabular data generation.
+[![LICENSE](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.9-blue.svg?style=flat-square)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1-orange)](https://pytorch.org/)
 
----
+![image](overview.png)
+
+***Overview of DP-2Stage.** In stage 1, the pre-trained LLM is fine-tuned on the respective pseudo data.
+Subsequently, in stage 2, the model from stage 1 undergoes further fine-tuning using the real private data*
+
+This repository contains the implementation for [DP-2Stage](https://openreview.net/forum?id=6nBIweDYzZ&noteId=nqBVYO1mmd), a two-stage fine-tuning framework for differentially private tabular data generation (Published at TMLR 2025).
+
+*Authors: Tejumade Afonja, Hui-Po Wang, Raouf Kerkouche, and Mario Fritz*
+
+Contact: Tejumade Afonja ([tejumade.afonja@cispa.de](mailto:tejumade.afonja@cispa.de))
+
+## Requirements
+This implementation is based on [PyTorch](https://www.anaconda.com/download/) (tested for version 2.5.1). Please refer to [requirements.txt](requirements.txt) for the other required packages and version.  
+
 
 ## **Environment Setup**
 
@@ -21,8 +36,6 @@ This repository provides tools and scripts DP-2Stage, a two-stage fine-tuning fr
    ```bash
    pip install -r requirements.txt
    ```
-
----
 
 ## **Data Preparation**
 
@@ -50,8 +63,6 @@ python utils/create_independent_uniform_pseudo_data.py \
     --n_synth_samples 30932
 ```
 
----
-
 ## **Training and Sampling**
 
 ### Run Training and Sampling
@@ -62,8 +73,6 @@ For example, to run the *out-distribution* pseudo data experiment for adult data
 bash scripts/run/adult/ood.sh
 ```
 
----
-
 ## **Evaluate Synthetic Data**
 
 To evaluate the synthetic data, modify the path to the generated data in `scripts/tabular_metrics.py`, and then run:
@@ -71,7 +80,6 @@ To evaluate the synthetic data, modify the path to the generated data in `script
 bash scripts/tabular_metrics.sh
 ```
 
----
 
 ## **Baselines**
 
@@ -94,9 +102,17 @@ To run the baselines, modify the `scripts/baseline.sh` as needed, and the run:
 ```bash
 bash scripts/baselines.sh
 ```
----
 
-## **Notes**
 
-- Ensure scripts are updated with your specific paths and configurations before running.
-- Refer to the documentation or script comments for additional options and explanations.
+
+## Citation
+```bibtex
+@article{
+afonja2025dpstage,
+title={{DP}-2Stage: Adapting Language Models as Differentially Private Tabular Data Generators},
+author={Tejumade Afonja and Hui-Po Wang and Raouf Kerkouche and Mario Fritz},
+journal={Transactions on Machine Learning Research},
+year={2025},
+url={https://openreview.net/forum?id=6nBIweDYzZ},
+}
+```
