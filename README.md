@@ -108,11 +108,11 @@ bash scripts/baselines.sh
 ## Citation
 ```bibtex
 @article{
-afonja2025dpstage,
-title={{DP}-2Stage: Adapting Language Models as Differentially Private Tabular Data Generators},
-author={Tejumade Afonja and Hui-Po Wang and Raouf Kerkouche and Mario Fritz},
-journal={Transactions on Machine Learning Research},
-year={2025},
-url={https://openreview.net/forum?id=6nBIweDYzZ},
+   afonja2025dpstage,
+   title={{DP}-2Stage: Adapting Language Models as Differentially Private Tabular Data Generators},
+   author={Tejumade Afonja and Hui-Po Wang and Raouf Kerkouche and Mario Fritz},
+   journal={Transactions on Machine Learning Research},
+   year={2025},
+   url={https://openreview.net/forum?id=6nBIweDYzZ},
 }
 ```
